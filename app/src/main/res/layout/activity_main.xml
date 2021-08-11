@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="8dp"
+    android:paddingTop="8dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="8dp"
+    android:background="@color/grey"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/dummy_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text=""
+        android:textColor="@color/black"
+        android:textSize="60sp" />
+
+    <TextView
+        android:id="@+id/countdown_text_view1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/dummy_text_view"
+        android:layout_centerInParent="true"
+        android:onClick="start2"
+        android:text="00:00"
+        android:textColor="@color/black"
+        android:textSize="60sp" />
+
+    <TextView
+        android:id="@+id/countdown_text_view2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_below="@+id/dummy_text_view"
+        android:text="00:00"
+        android:onClick="start1"
+        android:textColor="@color/black"
+        android:textSize="60sp" />
+
+    <Button
+        android:id="@+id/button_start_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="Start" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_centerVertical="true"
+        android:background="@android:color/holo_red_light"/>
+
+    <Button
+        android:id="@+id/button_reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_start_pause"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="11dp"
+        android:layout_marginLeft="11dp"
+        android:text="Reset"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
+</RelativeLayout>
