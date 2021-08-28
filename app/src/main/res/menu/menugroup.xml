@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- menu group -->
+    <!-- <group
+        android:id="@+id/group_presets"
+        android:checkableBehavior="single"> -->
+        <item
+            android:id="@+id/menu_blitz"
+            android:title="Blitz (3 min)" />
+        <item
+            android:id="@+id/menu_rapid"
+            android:title="Rapid (10 min)" />
+        <item
+            android:id="@+id/menu_bullet"
+            android:title="Bullet (1 min)" />
+    <!--</group>-->
+</menu>

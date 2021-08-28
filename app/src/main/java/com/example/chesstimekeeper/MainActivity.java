@@ -6,15 +6,18 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
-    private static final long START_TIME_IN_MILLIS = 60000; //can take this input from edittext
+    private static long START_TIME_IN_MILLIS = 60000; //can take this input from edittext
     private int flag = 0; //0 means white to play and 1 means black to play
 
     private TextView TextViewCountDown1;
@@ -52,14 +55,12 @@ public class MainActivity extends AppCompatActivity {
                 if (timerRunning1)  //pausing
                 {
                     pauseTimer1();
-                    flag=0; //remember that white to play after resume
-                }
-                else if (timerRunning2)  //pausing
+                    flag = 0; //remember that white to play after resume
+                } else if (timerRunning2)  //pausing
                 {
                     pauseTimer2();
-                    flag=1; //remember that black to lay after resume
-                }
-                else {
+                    flag = 1; //remember that black to lay after resume
+                } else {
                     if (flag == 0)   //start after being paused
                         startTimer1();
                     else
@@ -178,37 +179,83 @@ public class MainActivity extends AppCompatActivity {
             else
                 ButtonReset.setVisibility(View.INVISIBLE);
 
-            if (timeLeftInMillis1 < 1000 || timeLeftInMillis2 < 1000)
-            {
-                if (timeLeftInMillis1 < 1000 )
-                {
+            if (timeLeftInMillis1 < 1000 || timeLeftInMillis2 < 1000) {
+                if (timeLeftInMillis1 < 1000) {
                     ButtonStartPause.setVisibility(View.INVISIBLE);
                     alert("Black");
                 }
-                if(timeLeftInMillis2 < 1000)
-                {
+                if (timeLeftInMillis2 < 1000) {
                     ButtonStartPause.setVisibility(View.INVISIBLE);
                     alert("White");
                 }
-            }
-            else
+            } else
                 ButtonStartPause.setVisibility(View.VISIBLE);
         }
     }
 
-    private void alert(String winner)
-    {
+    private void alert(String winner) {
         AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity.this);
         dlg.setTitle("Game Ended");
-        dlg.setMessage(winner+" has won by time");
+        dlg.setMessage(winner + " has won by time");
         dlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        AlertDialog a =dlg.create();
+        AlertDialog a = dlg.create();
         a.show();
     }
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.setOnMenuItemClickListener(this);
+        popup.inflate(R.menu.menugroup);
+        popup.show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if (timerRunning1 || timerRunning2) {
+            Toast.makeText(this, "Can't switch modes while game's going on!!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        switch (item.getItemId()) {
+            case R.id.menu_blitz:
+                START_TIME_IN_MILLIS = 180000;
+                resetTimer();
+                Toast.makeText(this, "Blitz mode enabled", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.menu_rapid:
+                START_TIME_IN_MILLIS = 600000;
+                resetTimer();
+                Toast.makeText(this, "Rapid mode enabled", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.menu_bullet:
+                START_TIME_IN_MILLIS = 60000;
+                resetTimer();
+                Toast.makeText(this, "Bullet mode enabled", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /*
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_blitz:
+            case R.id.menu_rapid:
+            case R.id.menu_bullet:
+                if (item.isChecked()) item.setChecked(true);
+                else item.setChecked(false);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    */
 }
 
