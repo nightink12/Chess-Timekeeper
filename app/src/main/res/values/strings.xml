@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Chess Timekeeper</string>
+    <string-array name="choices">
+        <item>Bullet(1 Min)</item>
+        <item>Blitz(3 Min)</item>
+        <item>Rapid(10 Min)</item>
+    </string-array>
 </resources>

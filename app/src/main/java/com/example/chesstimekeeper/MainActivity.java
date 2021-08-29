@@ -6,16 +6,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
+public class MainActivity extends AppCompatActivity {
 
     private static long START_TIME_IN_MILLIS = 60000; //can take this input from edittext
     private int flag = 0; //0 means white to play and 1 means black to play
@@ -59,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 } else if (timerRunning2)  //pausing
                 {
                     pauseTimer2();
-                    flag = 1; //remember that black to lay after resume
+                    flag = 1; //remember that black to play after resume
                 } else {
                     if (flag == 0)   //start after being paused
                         startTimer1();
@@ -207,14 +206,92 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         a.show();
     }
 
-    public void showPopup(View v) {
-        PopupMenu popup = new PopupMenu(this, v);
-        popup.setOnMenuItemClickListener(this);
-        popup.inflate(R.menu.menugroup);
-        popup.show();
+    public void showChoices(View v) {
+
+        if (timerRunning1 || timerRunning2) {
+            Toast.makeText(this, "Can't switch modes while game's going on!!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this);
+
+        builder.setTitle("Choose Preset")
+
+                .setSingleChoiceItems(R.array.choices, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        //Toast.makeText(MainActivity.this,"Hi",Toast.LENGTH_SHORT).show();
+                    }
+
+                })
+
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        int selectedPosition = ((androidx.appcompat.app.AlertDialog) dialog).getListView().getCheckedItemPosition();
+                        switch (selectedPosition) {
+                            case 1:
+                                START_TIME_IN_MILLIS = 180000;
+                                resetTimer();
+                                Toast.makeText(MainActivity.this, "Blitz mode enabled", Toast.LENGTH_SHORT).show();
+                                return;
+                            case 2:
+                                START_TIME_IN_MILLIS = 600000;
+                                resetTimer();
+                                Toast.makeText(MainActivity.this, "Rapid mode enabled", Toast.LENGTH_SHORT).show();
+                                return;
+                            case 0:
+                                START_TIME_IN_MILLIS = 60000;
+                                resetTimer();
+                                Toast.makeText(MainActivity.this, "Bullet mode enabled", Toast.LENGTH_SHORT).show();
+                                return;
+                            default:
+                        }
+                    }
+                })
+
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        // removes the dialog from the screen
+                    }
+                })
+
+                .show();
     }
 
-    @Override
+    public void alertManual(View v)
+    {
+        if (timerRunning1 || timerRunning2) {
+            Toast.makeText(this, "Can't switch modes while game's going on!!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+        // get the layout inflater
+        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+
+        // inflate and set the layout for the dialog
+        // pass null as the parent view because its going in the dialog layout
+        builder.setView(inflater.inflate(R.layout.manual, null))
+
+                // action buttons
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        // your sign in code here
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // remove the dialog from the screen
+                    }
+                })
+                .show();
+    }
+
+    /*@Override
     public boolean onMenuItemClick(MenuItem item) {
         if (timerRunning1 || timerRunning2) {
             Toast.makeText(this, "Can't switch modes while game's going on!!", Toast.LENGTH_SHORT).show();
@@ -240,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             default:
                 return false;
         }
-    }
+    }*/
 
     /*
     @Override
