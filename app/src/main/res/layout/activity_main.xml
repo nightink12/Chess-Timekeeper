@@ -21,28 +21,30 @@
 
     <TextView
         android:id="@+id/countdown_text_view1"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/dummy_text_view"
-        android:layout_marginBottom="25dp"
         android:layout_centerInParent="true"
+        android:layout_marginBottom="25dp"
+        android:gravity="center"
         android:onClick="start2"
         android:rotation="180"
         android:text="00:00"
         android:textColor="@color/white"
-        android:textSize="120sp" />
+        android:textSize="80sp" />
 
     <TextView
         android:id="@+id/countdown_text_view2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/dummy_text_view"
-        android:layout_marginTop="25dp"
         android:layout_centerInParent="true"
+        android:layout_marginTop="25dp"
+        android:gravity="center"
         android:onClick="start1"
         android:text="00:00"
         android:textColor="@color/white"
-        android:textSize="120sp" />
+        android:textSize="80sp" />
 
     <Button
         android:id="@+id/button_start_pause"

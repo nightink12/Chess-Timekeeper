@@ -8,7 +8,10 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,8 +19,9 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static long START_TIME_IN_MILLIS = 60000; //can take this input from edittext
+    private long START_TIME_IN_MILLIS = 60000; //can take this input from edittext
     private int flag = 0; //0 means white to play and 1 means black to play
+
 
     private TextView TextViewCountDown1;
     private TextView TextViewCountDown2;
@@ -153,16 +157,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateCountDownText() {
-        int minutes1 = (int) (timeLeftInMillis1 / 1000) / 60;
+        int hours1 = (int) (timeLeftInMillis1/1000)/3600;
+        int minutes1 = (int) ((timeLeftInMillis1 / 1000)%3600) / 60;
         int seconds1 = (int) (timeLeftInMillis1 / 1000) % 60;
 
-        String timeLeftFormatted1 = String.format(Locale.getDefault(), "%02d:%02d", minutes1, seconds1);
+        String timeLeftFormatted1;
+        if(hours1>0)
+        {
+            timeLeftFormatted1 = String.format(Locale.getDefault(), "%d:%02d:%02d", hours1,minutes1, seconds1);
+        }
+        else
+        {
+            timeLeftFormatted1 = String.format(Locale.getDefault(), "%02d:%02d", minutes1, seconds1);
+        }
         TextViewCountDown1.setText(timeLeftFormatted1);
 
-        int minutes2 = (int) (timeLeftInMillis2 / 1000) / 60;
+        int hours2 = (int) (timeLeftInMillis2/1000)/3600;
+        int minutes2 = (int) ((timeLeftInMillis2 / 1000)%3600) / 60;
         int seconds2 = (int) (timeLeftInMillis2 / 1000) % 60;
 
-        String timeLeftFormatted2 = String.format(Locale.getDefault(), "%02d:%02d", minutes2, seconds2);
+        String timeLeftFormatted2;
+        if(hours2>0)
+        {
+            timeLeftFormatted2 = String.format(Locale.getDefault(), "%d:%02d:%02d", hours2,minutes2, seconds2);
+        }
+        else
+        {
+            timeLeftFormatted2 = String.format(Locale.getDefault(), "%02d:%02d", minutes2, seconds2);
+        }
         TextViewCountDown2.setText(timeLeftFormatted2);
     }
 
@@ -190,6 +212,12 @@ public class MainActivity extends AppCompatActivity {
             } else
                 ButtonStartPause.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void setTime(long milliseconds) {
+        START_TIME_IN_MILLIS= milliseconds;
+        resetTimer();
+        closeKeyboard();
     }
 
     private void alert(String winner) {
@@ -260,27 +288,39 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    public void alertManual(View v)
+    /*public void alertManual(View v)
     {
         if (timerRunning1 || timerRunning2) {
             Toast.makeText(this, "Can't switch modes while game's going on!!", Toast.LENGTH_SHORT).show();
             return;
         }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-
         // get the layout inflater
         LayoutInflater inflater = MainActivity.this.getLayoutInflater();
 
-        // inflate and set the layout for the dialog
-        // pass null as the parent view because its going in the dialog layout
+        final EditText EditTextManual = (EditText)inflater.inflate(R.layout.manual,null).findViewById(R.id.edit_text_manual);;
+        // inflate and set the layout for the dialog; pass null as the parent view because its going in the dialog layout
         builder.setView(inflater.inflate(R.layout.manual, null))
-
                 // action buttons
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        // your sign in code here
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+
+                        String input = EditTextManual.getText().toString();
+                        if(input.length()==0)
+                        {
+                            Toast.makeText(MainActivity.this,"Field can't be empty",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        long millisInput = Long.parseLong(input)*60000;
+                        if(millisInput==0)
+                        {
+                            Toast.makeText(MainActivity.this, "Please enter a positive number", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        setTime(millisInput);
+                        EditTextManual.setText("");
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -289,8 +329,59 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .show();
-    }
+    }*/
+    public void alertManual(View v)
+    {
+        if (timerRunning1 || timerRunning2) {
+            Toast.makeText(this, "Can't switch modes while game's going on!!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Manual");
+
+        View viewInflated = getLayoutInflater().inflate(R.layout.manual,null);
+
+        final EditText EditTextManual = (EditText) viewInflated.findViewById(R.id.edit_text_manual);
+
+        builder.setView(viewInflated);
+
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                String input = EditTextManual.getText().toString();
+                if(input.length()==0)
+                {
+                    Toast.makeText(MainActivity.this,"Field can't be empty",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                long millisInput = Long.parseLong(input)*60000;
+                if(millisInput==0)
+                {
+                    Toast.makeText(MainActivity.this, "Please enter a positive number", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                setTime(millisInput);
+                EditTextManual.setText("");
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+    private void closeKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
     /*@Override
     public boolean onMenuItemClick(MenuItem item) {
         if (timerRunning1 || timerRunning2) {
