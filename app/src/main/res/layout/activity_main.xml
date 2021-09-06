@@ -96,7 +96,7 @@
         android:layout_marginLeft="25dp"
         android:layout_toRightOf="@+id/button_start_pause"
         android:background="@drawable/custom_button"
-        android:text="Manual"
         android:onClick="alertManual"
+        android:text="Manual"
         android:textColor="#FFFFFF" />
 </RelativeLayout>
