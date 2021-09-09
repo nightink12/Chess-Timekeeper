@@ -1,11 +1,16 @@
 package com.example.chesstimekeeper;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -86,24 +91,60 @@ public class MainActivity extends AppCompatActivity {
         updateCountDownText();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.instructions:
+                showInstructions();
+                return true;
+            default:
+                //do nothing
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void showInstructions() {
+        String info = "1. The device has to be held in portrait mode. The upper half timer displays White's time and the lower half timer displays Black's time.\n\n" +
+                "2. Press the Start button to start the game. Tap on the timer to stop your time after playing your move.\n\n" +
+                "3. In the paused state or when the game is over, you can reset the time by tapping the Reset button.\n\n" +
+                "4. The Presets and Manual buttons let you customize the time for the game. The presets include Bullet, Blitz and Rapid modes. Manual lets you manually fix the time. (Note that they are functional only when the game hasn't started)\n\n" +
+                "5. Once a player's time runs out, a pop-up message notifies the winner by time.\n\n";
+
+        Intent intent = new Intent(this, Instructions.class);
+        intent.putExtra("key", info);
+        startActivity(intent);
+    }
+
     /**
      * Pauses black's timer and starts white's timer
+     *
      * @param view the TextView showing black's time
      */
     public void start1(View view) {
         if (timerRunning2) {
             pauseTimer2();
+            if (!(timeLeftInMillis1 < 1000))
             startTimer1();
         }
     }
 
     /**
      * Pauses white's timer and starts black's timer
+     *
      * @param view the TextView showing white's time
      */
     public void start2(View view) {
         if (timerRunning1) {
             pauseTimer1();
+            if (!(timeLeftInMillis2 < 1000))
             startTimer2();
         }
     }
@@ -252,10 +293,14 @@ public class MainActivity extends AppCompatActivity {
                 if (timeLeftInMillis1 < 1000) {
                     ButtonStartPause.setVisibility(View.INVISIBLE);
                     alertWinner("Black");                           //Black is winner
+                    if(timerRunning2)
+                        pauseTimer2();
                 }
                 if (timeLeftInMillis2 < 1000) {
                     ButtonStartPause.setVisibility(View.INVISIBLE);
                     alertWinner("White");                           //White is winner
+                    if(timerRunning1)
+                        pauseTimer1();
                 }
             } else
                 ButtonStartPause.setVisibility(View.VISIBLE);
@@ -264,6 +309,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Invoked when user manually sets time using alertManual() method
+     *
      * @param milliseconds time in milliseconds
      */
     private void setTime(long milliseconds) {
@@ -274,6 +320,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * opens up an AlertDialog box message that notifies who the winner is (by time)
+     *
      * @param winner string that notifies whether white or black is the winner
      */
     private void alertWinner(String winner) {

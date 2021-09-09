@@ -10,7 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <!--for disabling landscape mode-->
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".Instructions"
+            android:label="Instructions" />
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
